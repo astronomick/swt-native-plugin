@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2021, Michael Barbeaux
  * All rights reserved.
  *
@@ -24,7 +24,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.eclipse.swt.internal;
 
-// FIXME
-//File swtSourcesDirectory = new File(basedir, "target/generated-sources/swt")
-//assert swtSourcesDirectory.isDirectory()
+import com.oracle.svm.core.annotate.Substitute;
+import com.oracle.svm.core.annotate.TargetClass;
+
+/**
+ * These methods will be replaced by GraalVM at native compilation time.
+ */
+@TargetClass(className = "org.eclipse.swt.internal.Library")
+public final class Target_Library {
+
+    @Substitute
+    public static final void loadLibrary(final String name, final boolean mapName) {
+        // No SWT dynamic library to be loaded as it is statically linked at compilation time
+    }
+
+    @Substitute
+    public static final boolean isLoadable() {
+        return true;
+    }
+
+}

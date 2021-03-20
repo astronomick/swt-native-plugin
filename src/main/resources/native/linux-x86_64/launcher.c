@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright © 2021, Michael Barbeaux
  * All rights reserved.
  *
@@ -24,47 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.mbarbeaux;
+#include "{{artifactId}}.h"
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-@Mojo(name = "native", defaultPhase = LifecyclePhase.PACKAGE)
-@Slf4j
-public class SwtNativeMojo extends AbstractMojo {
-
-    @Parameter(property = "mainClass", required = true)
-    private String mainClass;
-
-    @Parameter(required = true, defaultValue = "${project.build.directory}/swt-native")
-    private File outputDirectory;
-
-    public void execute() throws MojoExecutionException {
-        log.info("MainClass = {}", mainClass);
-        log.info("OutputDirectory = {}", outputDirectory);
-
-        final Path outputPath = outputDirectory.toPath();
-        if (Files.exists(outputPath) && !Files.isDirectory(outputPath)) {
-            throw new MojoExecutionException("Cannot use " + outputPath.toString() + " as output directory, it is not a directory");
-        }
-        try {
-            Files.createDirectory(outputPath);
-            try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(outputPath.resolve("output.txt")))) {
-                writer.println(mainClass);
-            }
-        } catch (IOException e) {
-            log.error("", e);
-        }
-    }
-
+int main(int argc, char** argv) {
+    run_main(argc, argv);
 }

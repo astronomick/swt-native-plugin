@@ -32,7 +32,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.mbarbeaux</groupId>
+    <groupId>com.github.astronomick</groupId>
     <artifactId>swt-native-plugin-it</artifactId>
     <version>0.1-SNAPSHOT</version>
 
@@ -64,15 +64,31 @@
                 <version>@project.version@</version>
                 <executions>
                     <execution>
+                        <id>add-swt-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-swt-sources</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>add-swt-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-swt-resources</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>swt-native-compile</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>native</goal>
+                            <goal>swt-native-compile</goal>
                         </goals>
-                        <configuration>
-                            <mainClass>com.github.mbarbeaux.SampleApplication</mainClass>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <swtVersion>3.114.0</swtVersion>
+                    <mainClass>com.github.astronomick.SampleApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -24,7 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "{{artifactId}}.h"
 
-// FIXME
-//File swtSourcesDirectory = new File(basedir, "target/generated-sources/swt")
-//assert swtSourcesDirectory.isDirectory()
+int main(int argc, char** argv) {
+    run_main(argc, argv);
+}

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2021, Michael Barbeaux
  * All rights reserved.
  *
@@ -24,7 +24,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.astronomick;
 
-// FIXME
-//File swtSourcesDirectory = new File(basedir, "target/generated-sources/swt")
-//assert swtSourcesDirectory.isDirectory()
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+
+public class SampleApplication {
+
+    public static final void main(final String[] args) {
+        final Display display = new Display();
+        final Shell shell = new Shell(display);
+        shell.setText("Hello GraalvmSwtNative !");
+        shell.setSize(600, 400);
+        final Label label = new Label(shell, SWT.NONE);
+        label.setText("Hello World");
+        label.pack();
+        shell.open();
+
+        while (!shell.isDisposed()) {
+            if (!display.readAndDispatch()) {
+                display.sleep();
+            }
+        }
+
+        display.dispose();
+    }
+
+}

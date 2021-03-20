@@ -1,4 +1,4 @@
-name: build
+name: osx-x86_64
 
 on:
   push:
@@ -17,8 +17,8 @@ on:
       - 'hotfix/**'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  verify:
+    runs-on: macos-latest
 
     steps:
       - name: checkout
@@ -42,10 +42,19 @@ jobs:
       - name: verify
         run: ./mvnw --batch-mode --update-snapshots clean verify
 
+      - name: compress
+        uses: svenstaro/upx-action@v2
+        with:
+          file: target/it/swt-native-plugin-it/target/native/osx-x86_64/swt-native-plugin-it
+          args: --best
+          strip: false
+
       - name: prepare-staging
         run: |
           mkdir staging
           cp -r target/swt-native-plugin-*.jar staging
+          cp -r target/it/swt-native-plugin-it/target/native/osx-x86_64/swt-native-plugin-it staging
+          cp -r target/it/swt-native-plugin-it/build.log staging
 
       - name: upload-package
         uses: actions/upload-artifact@v2

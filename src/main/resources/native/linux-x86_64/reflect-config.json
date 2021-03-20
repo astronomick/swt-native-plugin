@@ -1,0 +1,25 @@
+[
+{
+  "name":"org.eclipse.swt.widgets.Button",
+  "methods":[{"name":"getGrayed","parameterTypes":[] }]
+},
+{
+  "name":"org.eclipse.swt.widgets.Display"
+},
+{
+  "name":"sun.security.provider.SHA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA2$SHA256",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.X509Factory",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.rsa.RSASignature$SHA256withRSA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+}
+]

@@ -24,7 +24,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.mbarbeaux;
+package com.github.astronomick;
 
-public class SampleApplication {
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+
+import java.nio.file.Path;
+
+@Mojo(name = "add-swt-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+public class AddSwtSourcesMojo extends AbstractSwtSourcesMojo {
+
+    public void execute() {
+        final String osClassifier = getOsClassifier();
+        final Path swtSourcesPath = Path.of(targetDirectory.getAbsolutePath(), "generated-sources", osClassifier, "swt");
+
+        extractFromSwtSources("glob:org/eclipse/swt/**.java", swtSourcesPath);
+
+        // Add unzipped sources folder to compilation path.
+        project.addCompileSourceRoot(swtSourcesPath.toFile().getAbsolutePath());
+    }
+
 }

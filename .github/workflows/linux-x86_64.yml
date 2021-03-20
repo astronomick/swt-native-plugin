@@ -1,0 +1,68 @@
+name: linux-x86_64
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - 'feature/**'
+      - 'release/**'
+      - 'hotfix/**'
+  pull_request:
+    branches:
+      - master
+      - develop
+      - 'feature/**'
+      - 'release/**'
+      - 'hotfix/**'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: install-graalvm
+        uses: DeLaGuardo/setup-graalvm@master
+        with:
+          graalvm-version: '21.0.0.2.java11'
+
+      - name: install-native-image
+        run: gu install native-image
+
+      - name: install-dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libz-dev zlib1g-dev libgtk-3-dev libpango1.0-dev libgl1-mesa-dev libglu1-mesa-dev libwebkit2gtk-4.0-dev
+
+      - name: cache-maven-repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: verify
+        run: ./mvnw --batch-mode --update-snapshots clean verify
+
+      - name: compress
+        uses: svenstaro/upx-action@v2
+        with:
+          file: target/it/swt-native-plugin-it/target/native/linux-x86_64/swt-native-plugin-it
+          args: --best --lzma
+          strip: false
+
+      - name: prepare-staging
+        run: |
+          mkdir staging
+          cp -r target/swt-native-plugin-*.jar staging
+          cp -r target/it/swt-native-plugin-it/target/native/linux-x86_64/swt-native-plugin-it staging
+          cp -r target/it/swt-native-plugin-it/build.log staging
+
+      - name: upload-package
+        uses: actions/upload-artifact@v2
+        with:
+          name: Package
+          path: staging

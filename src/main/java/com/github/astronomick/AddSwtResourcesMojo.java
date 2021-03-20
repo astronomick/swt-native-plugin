@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2021, Michael Barbeaux
  * All rights reserved.
  *
@@ -24,7 +24,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.astronomick;
 
-// FIXME
-//File swtSourcesDirectory = new File(basedir, "target/generated-sources/swt")
-//assert swtSourcesDirectory.isDirectory()
+import org.apache.maven.model.Resource;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+
+import java.nio.file.Path;
+
+@Mojo(name = "add-swt-resources", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+public class AddSwtResourcesMojo extends AbstractSwtSourcesMojo {
+
+    public void execute() {
+        final String osClassifier = getOsClassifier();
+        final Path swtResourcesPath = Path.of(targetDirectory.getAbsolutePath(), "generated-resources", osClassifier, "swt");
+
+        extractFromSwtSources("glob:org/eclipse/swt/**.{properties,css}", swtResourcesPath);
+
+        // Add unzipped sources folder to compilation path.
+        final Resource resource = new Resource();
+        resource.setFiltering(false);
+        resource.setDirectory(swtResourcesPath.toFile().getAbsolutePath());
+        project.addResource(resource);
+    }
+
+}
