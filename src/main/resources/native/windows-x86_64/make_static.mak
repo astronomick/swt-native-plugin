@@ -1,43 +1,59 @@
-#
-# Copyright © 2021, Michael Barbeaux
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above copyright
-#       notice, this list of conditions and the following disclaimer in the
-#       documentation and/or other materials provided with the distribution.
-#     * Neither the name of the <organization> nor the
-#       names of its contributors may be used to endorse or promote products
-#       derived from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+cl -O1 /I. /c /MD /D_UNICODE /DUNICODE /DWIN32 /D_WINDOWS launcher.c
+rc -DASTRONOMY_TOOLS_FILE_VERSION=\"0.1.0\" -DASTRONOMY_TOOLS_COMMA_VERSION=0,1,0 -DASTRONOMY_TOOLS_ORG_FILENAME=\"astronomy-tools.exe\" -r -fo astronomy-tools.res astronomy-tools.rc
 
-CC = cl
-LINK = link
-CFLAGS = -I..\graalvm\include /MD /D_UNICODE /DUNICODE /DWIN32 /D_WINDOWS
+move SVM-* SVM
 
-JAVA_HOME = {{javaHome}}
-SVM_DIR = {{svmDir}}
+link ^
+launcher.obj ^
+SVM\astronomy-tools.obj ^
+swt_library\library\swt.obj ^
+swt_library\library\callback.obj ^
+swt_library\library\c.obj ^
+swt_library\library\c_stats.obj ^
+swt_library\library\os.obj ^
+swt_library\library\os_structs.obj ^
+swt_library\library\os_stats.obj ^
+swt_library\library\com_structs.obj ^
+swt_library\library\com.obj ^
+swt_library\library\com_stats.obj ^
+swt_library\library\com_custom.obj ^
+astronomy-tools.res ^
+/out:..\astronomy-tools.exe ^
+/NODEFAULTLIB:LIBCMT ^
+/LIBPATH:%JRE_LIB% ^
+net.lib ^
+java.lib ^
+zip.lib ^
+nio.lib ^
+%JRE_LIB%\svm\clibraries\windows-amd64\ffi.lib ^
+%JRE_LIB%\svm\clibraries\windows-amd64\strictmath.lib ^
+%JRE_LIB%\svm\clibraries\windows-amd64\jvm.lib ^
+%JRE_LIB%\svm\clibraries\windows-amd64\libchelper.lib ^
+comctl32.lib ^
+shell32.lib ^
+imm32.lib ^
+oleacc.lib ^
+usp10.lib ^
+wininet.lib ^
+Crypt32.lib ^
+Shlwapi.lib ^
+Uxtheme.lib ^
+Propsys.lib ^
+Urlmon.lib ^
+Msimg32.lib ^
+ole32.lib ^
+uuid.lib ^
+oleaut32.lib ^
+kernel32.lib ^
+ws2_32.lib ^
+mswsock.lib ^
+advapi32.lib ^
+bufferoverflowu.lib ^
+user32.lib ^
+gdi32.lib ^
+comdlg32.lib ^
+winspool.lib ^
+userenv.lib ^
+iphlpapi.lib
 
-JAVA_LIB_DIR = /LIBPATH:$(JAVA_HOME)\lib\svm\clibraries\windows-amd64 /LIBPATH:$(JAVA_HOME)\lib\static\windows-amd64
-JAVA_LIB = net.lib java.lib fdlibm.lib jaas.lib sunec.lib zip.lib nio.lib libchelper.lib jvm.lib ffi.lib
-WIN_LIB = advapi32.lib user32.lib userenv.lib Version.lib ws2_32.lib
-
-%.obj: %.c
-	$(CC) -O1 /c $< $(CFLAGS)
-
-all: launcher.obj
-	$(LINK) /NODEFAULTLIB:LIBCMT /out:..\{{artifactId}}.exe launcher.obj $(SVM_DIR)\{{artifactId}}.obj $(JAVA_LIB_DIR) $(JAVA_LIB) $(WIN_LIB)
+editbin /SUBSYSTEM:WINDOWS ..\astronomy-tools.exe

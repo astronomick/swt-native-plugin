@@ -51,7 +51,10 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Mojo(name = "swt-native-compile", defaultPhase = LifecyclePhase.PACKAGE)
 public class SwtNativeCompileMojo extends AbstractSwtSourcesMojo {
@@ -68,14 +71,25 @@ public class SwtNativeCompileMojo extends AbstractSwtSourcesMojo {
             final Artifact graalSvmArtifact = new DefaultArtifact("org.graalvm.nativeimage", "svm", null, "jar", "21.0.0.2");
             final ArtifactResult graalSvmArtifactResult = artifactResolver.resolveArtifact(repoSession, new ArtifactRequest(graalSvmArtifact, projectRepos, ""));
 
-            Path temp = Files.createTempDirectory("build");
+            final List<String> javaFiles = new ArrayList<>();
+            javaFiles.add("Target_Library.java");
+            if (SystemUtils.IS_OS_WINDOWS) {
+                javaFiles.add("Target_OS.java");
+                javaFiles.add("OnlyPresent.java");
+            }
+
+            final Path temp = Files.createTempDirectory("build");
             temp.toFile().deleteOnExit();
-            Files.copy(getClass().getClassLoader().getResourceAsStream("graalvm/org/eclipse/swt/internal/Target_Library.java"), temp.resolve("Target_Library.java"));
-            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-            compiler.run(System.in, System.out, System.err, "-classpath",
+            for (final String javaFile : javaFiles) {
+                Files.copy(getClass().getClassLoader().getResourceAsStream("graalvm/" + javaFile), temp.resolve(javaFile));
+            }
+
+            final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            compiler.run(System.in, System.out, System.err, Stream.concat(Stream.of("-classpath",
                     graalSvmArtifactResult.getArtifact().getFile().getAbsolutePath(), "-d",
-                    Path.of(targetDirectory.getAbsolutePath(), "native", osClassifier, "additional-classes").toFile().getAbsolutePath(),
-                    temp.resolve("Target_Library.java").toFile().getAbsolutePath());
+                    Path.of(targetDirectory.getAbsolutePath(), "native", osClassifier, "additional-classes").toFile().getAbsolutePath()),
+                    javaFiles.stream().map(javaFile -> temp.resolve(javaFile).toFile().getAbsolutePath())
+            ).toArray(String[]::new));
 
         } catch (Exception e) {
             e.printStackTrace();
