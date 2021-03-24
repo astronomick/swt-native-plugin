@@ -4,7 +4,7 @@
 MANIFEST_RESOURCE_ID RT_MANIFEST "exec.manifest"
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION ASTRONOMY_TOOLS_COMMA_VERSION
+ FILEVERSION 0,0,0,1
  PRODUCTVERSION 0,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -20,13 +20,13 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "Astronomick\0"
-            VALUE "FileDescription", "Astronomy Tools\0"
-            VALUE "FileVersion", ASTRONOMY_TOOLS_FILE_VERSION
-            VALUE "InternalName", "AstronomyTools\0"
-            VALUE "LegalCopyright", "Copyright (c) 2020 Astronomick. All Rights Reserved.\0"
-            VALUE "OriginalFilename", ASTRONOMY_TOOLS_ORG_FILENAME
-            VALUE "ProductName", "Astronomy Tools\0"
+            VALUE "CompanyName", "swt-native-plugin-it\0"
+            VALUE "FileDescription", "swt-native-plugin-it\0"
+            VALUE "FileVersion", "0.0.0.1"
+            VALUE "InternalName", "swt-native-plugin-it\0"
+            VALUE "LegalCopyright", "swt-native-plugin-it\0"
+            VALUE "OriginalFilename", "swt-native-plugin-it"
+            VALUE "ProductName", "swt-native-plugin-it\0"
             VALUE "ProductVersion", "0,0,0,0\0"
         END
     END

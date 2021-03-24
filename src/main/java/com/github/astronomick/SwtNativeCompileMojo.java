@@ -164,6 +164,20 @@ public class SwtNativeCompileMojo extends AbstractSwtSourcesMojo {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            try {
+                final ProcessBuilder processBuilder = new ProcessBuilder("nmake", "-f", "make_win32.mak");
+                processBuilder.directory(swtResourcesPath.resolve("library").toFile());
+                String javaHome = System.getenv("JAVA_HOME");
+                processBuilder.environment().put("SWT_JAVA_HOME", javaHome);
+                processBuilder.inheritIO();
+                Process process = processBuilder.start();
+                if (process.waitFor() != 0) {
+                    throw new MojoExecutionException("Execution of make returned non-zero result");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         final MustacheFactory mustacheFactory = new DefaultMustacheFactory();
@@ -199,8 +213,19 @@ public class SwtNativeCompileMojo extends AbstractSwtSourcesMojo {
             e.printStackTrace();
         }
 
+        if (SystemUtils.IS_OS_WINDOWS) {
+            try{
+                Files.copy(getClass().getClassLoader().getResourceAsStream("native/" + osClassifier + "/cancel.ico"), swtResourcesPath.getParent().resolve("build").resolve("cancel.ico"));
+                Files.copy(getClass().getClassLoader().getResourceAsStream("native/" + osClassifier + "/search.ico"), swtResourcesPath.getParent().resolve("build").resolve("search.ico"));
+                Files.copy(getClass().getClassLoader().getResourceAsStream("native/" + osClassifier + "/exec.manifest"), swtResourcesPath.getParent().resolve("build").resolve("exec.manifest"));
+                Files.copy(getClass().getClassLoader().getResourceAsStream("native/" + osClassifier + "/swt-native-plugin-it.rc"), swtResourcesPath.getParent().resolve("build").resolve("swt-native-plugin-it.rc"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
-            final ProcessBuilder processBuilder = new ProcessBuilder("make", "-f", "make_static.mak", "all");
+            final ProcessBuilder processBuilder = new ProcessBuilder(SystemUtils.IS_OS_WINDOWS ? "nmake" : "make", "-f", "make_static.mak", "all");
             processBuilder.directory(swtResourcesPath.getParent().resolve("build").toFile());
             processBuilder.inheritIO();
             Process process = processBuilder.start();
